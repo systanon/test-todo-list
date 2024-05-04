@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { TodoistApi } from "@doist/todoist-api-typescript"
 
-const api = new TodoistApi("27791749084db6194209ec6e82c8eac685d6447a")
+const api = new TodoistApi(import.meta.env.VITE_APP_TOKEN)
 
 
 export const useProductStore = defineStore('productStore', {
