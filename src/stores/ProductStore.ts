@@ -1,13 +1,16 @@
 import { defineStore } from 'pinia'
-import { TodoistApi } from "@doist/todoist-api-typescript"
+import { TodoistApi, Project, TodoistRequestError } from "@doist/todoist-api-typescript"
 
 const api = new TodoistApi(import.meta.env.VITE_APP_TOKEN)
 
+interface ProductStoreState {
+  allProjects: Project[];
+}
+
 
 export const useProductStore = defineStore('productStore', {
-  state: () => {
+  state: (): ProductStoreState => {
     return {
-      productList: [],
       allProjects: []
     }
   },
@@ -15,12 +18,12 @@ export const useProductStore = defineStore('productStore', {
     getAllProjects() {
       api.getProjects()
     .then((projects: any) => this.allProjects = projects)
-    .catch((error: any) => console.log(error))
+    .catch((error: TodoistRequestError) => console.log(error))
     },
     addProject(name: string) {
       return api.addProject({ name })
-    .then((project: any) => this.allProjects = this.allProjects.concat(project))
-    .catch((error: any) => console.log(error))
+    .then((project: Project) => this.allProjects.push(project))
+    .catch((error: TodoistRequestError) => console.log(error))
     },
     deleteProject(_id: string) {
       api.deleteProject(_id)
@@ -28,13 +31,13 @@ export const useProductStore = defineStore('productStore', {
       this.allProjects = this.allProjects.filter(({id}) => id !== _id)
       console.log(isSuccess)}
     )
-    .catch((error) => console.log(error))
+    .catch((error: TodoistRequestError) => console.log(error))
 
     },
-    editProject({id, name}) {
+    editProject({id, name}: { id: string, name: string }) {
       return api.updateProject(id, { name } )
         .then(() => this.getAllProjects())
-        .catch((error) => console.log(error)) 
+        .catch((error: TodoistRequestError) => console.log(error)) 
     },
   },
 })
