@@ -4,7 +4,6 @@ import { TodoistApi, Project, TodoistRequestError } from "@doist/todoist-api-typ
 const api = new TodoistApi(import.meta.env.VITE_APP_TOKEN)
 
 interface ProductStoreState {
-  allProjects: Project[];
   projects: Record<string, Project>;
 }
 
@@ -12,7 +11,6 @@ interface ProductStoreState {
 export const useProductStore = defineStore('productStore', {
   state: (): ProductStoreState => {
     return {
-      allProjects: [],
       projects: {}
     }
   },
