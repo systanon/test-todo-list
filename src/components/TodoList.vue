@@ -8,7 +8,7 @@
         <input v-else v-model="editedTodo.name" @keyup.enter="updateTodo" type="text" class="border border-gray-400 rounded-lg p-1 w-full" placeholder="Edit todo...">
         <div>
           <button @click="editTodo(id)" class="text-blue-500 hover:text-blue-700">{{ editingId === id ? 'Save' : 'Edit' }}</button>
-          <button @click="removeTodo(id)" class="text-red-500 hover:text-red-700">Remove</button>
+          <button @click="deleteProject(id)" class="text-red-500 hover:text-red-700">Remove</button>
         </div>
       </li>
     </ul>
