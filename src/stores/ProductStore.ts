@@ -5,39 +5,51 @@ const api = new TodoistApi(import.meta.env.VITE_APP_TOKEN)
 
 interface ProductStoreState {
   allProjects: Project[];
+  projects: Record<string, Project>;
 }
 
 
 export const useProductStore = defineStore('productStore', {
   state: (): ProductStoreState => {
     return {
-      allProjects: []
+      allProjects: [],
+      projects: {}
+    }
+  },
+  getters: {
+    allProjects:  (state) => {
+      return Object.values(state.projects)
     }
   },
   actions: {
     getAllProjects() {
       api.getProjects()
-    .then((projects: any) => this.allProjects = projects)
+    .then((projects: any) => projects.forEach(this.setProject))
     .catch((error: TodoistRequestError) => console.log(error))
     },
     addProject(name: string) {
       return api.addProject({ name })
-    .then((project: Project) => this.allProjects.push(project))
+    .then((project: Project) => this.setProject(project))
     .catch((error: TodoistRequestError) => console.log(error))
     },
     deleteProject(_id: string) {
       api.deleteProject(_id)
     .then((isSuccess) => {
-      this.allProjects = this.allProjects.filter(({id}) => id !== _id)
+      delete  this.projects[_id]
       console.log(isSuccess)}
     )
     .catch((error: TodoistRequestError) => console.log(error))
 
     },
-    editProject({id, name}: { id: string, name: string }) {
-      return api.updateProject(id, { name } )
-        .then(() => this.getAllProjects())
+    editProject(project: Project) {
+      const {id, name } = project
+      return api.updateProject(id, {name} )
+        .then(() => this.setProject(project))
         .catch((error: TodoistRequestError) => console.log(error)) 
     },
+    setProject(project: Project) {
+      const {id}: {id: string} = project
+      this.projects[id] = project
+    }
   },
 })
